@@ -90,9 +90,9 @@ function divideTriangle(a,b,c,count){
 	}
 
 function view(gl){
-	var eye = vec4(0,0,0);
- 	var up = vec4(0,1,0);
- 	var at = vec4(0.5,0.5,0.5);
+	var eye = vec3(0,0,0);
+ 	var up = vec3(0,1,0);
+ 	var at = vec3(0.5,0.5,0.5);
  	var V = lookAt(eye, at, up);
 
  	var vLocation = gl.getUniformLocation(gl.program, "modelViewMatrix")
@@ -128,7 +128,7 @@ function initSphere(gl, numTimesToSubdivide){
  	gl.enableVertexAttribArray(attributeColor);
 
 //normalbuffer
-	gl.deleteBuffer(normalsBuffer);
+	gl.deleteBuffer(gl.normalsBuffer);
 	gl.normalsBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, gl.normalsBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
