@@ -101,7 +101,22 @@ function view(gl){
 
 function initSphere(gl, numTimesToSubdivide){
 	var va = vec4(0.0, 0.0, 1.0, 1);
-	var vb = vec4(0.0, 0.942809, 
+	var vb = vec4(0.0, 0.942809, -0.333333, 1);
+	var vc = vec4(-0.816497, -0.471405, -0.333333, 1);
+	var vd = vec4(0.816497, -0.471405, -0.333333, 1);
+	tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
+	var numVertices = vertices.length;
+
+
+//vertexbuffer
+	gl.deleteBuffer(gl.positionBuffer)
+ 	gl.positionBuffer = gl.createBuffer();
+ 	gl.bindBuffer(gl.ARRAY_BUFFER, gl.positionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
+ //html connection
+	var attributePosition = gl.getAttribLocation(gl.program, 'a_Position');
+ 	gl.vertexAttribPointer(attributePosition, 4, gl.FLOAT, false, 0, 0);
+ 	gl.enableVertexAttribArray(attributePosition);	
 //colorbuffer
 	gl.deleteBuffer(gl.cBuffer)
 	gl.cBuffer = gl.createBuffer();
@@ -115,7 +130,7 @@ function initSphere(gl, numTimesToSubdivide){
 	gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
 }
- 
+
 
 function render(gl, numPoints){
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
