@@ -1,0 +1,45 @@
+<!DOCTYPE html> 
+<html>
+	<head>
+
+		<script type="text/javascript" src="../initShaders.js"> </script>
+		<script type="text/javascript" src="../MV.js"> </script>
+		<script type="text/javascript" src="drawASphere.js"></script>
+
+		<script id="vertex-shader" type="x-shader/x-vertex">
+		
+
+			attribute vec4 a_Position;
+			attribute vec4 a_Normal;
+			attribute vec4 a_Color;
+			varying vec4 v_Color;
+			uniform mat4 modelViewMatrix;
+			uniform vec4 lightPos;
+
+			void main(){
+				v_Color = a_Color;
+				gl_PointSize = 10.0;
+				gl_Position = modelViewMatrix * a_Position;
+				vec3 w_i = lightPos.w == 0.0 ? normalize(-lightPos.xyz) : normalize(lightPos.xyz - pos.xyz);
+
+			}
+			
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragment-shader">
+			precision mediump float;
+			varying vec4 v_Color;
+			void main(){
+				gl_FragColor = v_Color;
+			}
+		</script>
+	</head>
+
+	<body> 
+		<button id="ButtonCoarse">More coarse</button>
+		<button id="ButtonFine">More fine</button>
+		<!-- <button id="ButtonZ">Rotate Z</button> -->
+		<canvas id ="c" height="512" width="512" /> 
+
+	</body>
+</html
