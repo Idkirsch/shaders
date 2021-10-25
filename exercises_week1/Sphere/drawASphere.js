@@ -125,7 +125,11 @@ function initSphere(gl, numTimesToSubdivide){
  //html connection
  	var attributeColor = gl.getAttribLocation(gl.program, "a_Color");
  	gl.vertexAttribPointer(attributeColor, 4, gl.FLOAT, false, 0, 0);
- 	gl.enableVertexsteBuffer();
+ 	gl.enableVertexAttribArray(attributeColor);
+
+//normalbuffer
+	gl.deleteBuffer(normalsBuffer);
+	gl.normalsBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, gl.normalsBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
