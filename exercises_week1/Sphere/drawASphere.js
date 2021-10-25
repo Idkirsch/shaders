@@ -87,6 +87,9 @@ function divideTriangle(a,b,c,count){
 		normalsArray.push(vec4(b[0], b[1], b[2], 0.0));
 		normalsArray.push(vec4(c[0], c[1], c[2], 0.0));
 		
+		// normalsArray.push(a);
+		// normalsArray.push(b);
+		// normalsArray.push(c);
 	}
 
 function view(gl){
