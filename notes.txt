@@ -1,0 +1,26 @@
+Vertex shader generates clip space coordinates
+Fragment shader adds colors
+
+attributes is data pulled from buffers
+uniforms are values that stay the same through a draw call
+textures is data from pixels or texels
+varying passes data from vertex shader to fragment shader
+
+General flow:
+	- create buffer
+	- put data in buffer
+	- look up location of attributes (gl.getAttribLocation)
+	- tell webGl how to pull data from those buffers into the attribute (gl.enableVertexAttrib), (gl.vertexAttribPointer)
+
+
+Model matrix:
+	Defines how to move original model data around in 3D space
+Projection matrix:
+	Is used to convert world space coordinates into clip space coordinates
+	Example: Perspective projection matrix
+View matrix:
+	Is responsible for moving the object in the scene to simulate the position of the camera being changed
+
+
+LookAt
+	Most 3D math libraries have a lookAt function. Often it is designed specifically to make a "view matrix" and not a "camera matrix". In other words, it makes a matrix that moves everything else in front of the camera rather than a matrix that moves the camera itself.
