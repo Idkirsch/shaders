@@ -24,3 +24,15 @@ View matrix:
 
 LookAt
 	Most 3D math libraries have a lookAt function. Often it is designed specifically to make a "view matrix" and not a "camera matrix". In other words, it makes a matrix that moves everything else in front of the camera rather than a matrix that moves the camera itself.
+
+
+Useful links:
+	https://math.hws.edu/graphicsbook/c7/s2.html
+
+
+
+Textures:
+
+
+About spaces:
+	An object has its own space, called object space (usually the object is in oregon). If we want to have several objects in the same coordinate system, we use the ModelMatrix to transform into worldspace. In worldspace we can place several objects next to each other. Using the viewmatrix we can transform into Eyespace where the placement of the camera decides how the scene looks. To get the sense of depth in the scene, use ProjectionMatrix to transform into ClipSpace. Then, to go to normalized device coordinates use W divide (I think divide by the w coordinate?? xyzw)
