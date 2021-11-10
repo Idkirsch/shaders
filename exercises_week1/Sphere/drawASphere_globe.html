@@ -60,7 +60,7 @@
 				float u = 1.0 - ((atan(v_Position.z,v_Position.x))/(2.0*3.14));
 				float v = (acos(v_Position.y)) / 3.14;
 				vec2 texCoord = vec2(u,v);
-				gl_FragColor = texture2D(sampler, texCoord);
+				gl_FragColor = texture2D(sampler, texCoord)*v_Color;
 
 			}
 		</script>
