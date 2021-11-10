@@ -41,10 +41,14 @@ window.onload = function init(){
  	}
  	image.src = 'earth.jpg'
 
+ 	var beta = 0.0;
+	var betaLoc = gl.getUniformLocation(gl.program, "beta")
 
  	initSphere(gl, numTimesToSubdivide);
  	view(gl)
  	function tick(){
+ 		beta += 0.01;
+ 		gl.uniform1f(betaLoc, beta);
  		requestAnimationFrame(tick);
 		render(gl, vertices.length);
  	}
