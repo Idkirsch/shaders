@@ -1,0 +1,66 @@
+<!DOCTYPE html> 
+<html>
+	<head>
+
+		<script type="text/javascript" src="../initShaders.js"> </script>
+		<script type="text/javascript" src="../MV.js"> </script>
+		<script type="text/javascript" src="drawASphere2.js"></script>
+
+		<script id="vertex-shader" type="x-shader/x-vertex">
+		
+
+			attribute vec4 a_Position;
+			attribute vec4 a_Normal;
+			varying vec4 v_Normal;
+			attribute vec4 a_Color;
+			varying vec4 v_Color;
+			
+			uniform mat4 ViewMatrix;
+			uniform vec4 lightPos;
+			// varying vec3 w_i; 
+
+			void main(){
+				// v_Color = a_Color;
+				v_Normal = a_Normal;
+				gl_PointSize = 10.0;
+				gl_Position = ViewMatrix * a_Position;
+				vec3 n = a_Normal.xyz;
+				vec3 L_d = vec3(1,1,1);
+				vec3 kd = a_Color.xyz;
+
+				
+
+				// nOW ITs working, but not doing anything
+				vec3 w_i = lightPos.w == 0.0 ? normalize(-lightPos.xyz) : normalize(lightPos.xyz - gl_Position.xyz);
+
+
+				float cos_theta = max(dot(n,w_i),0.0);
+				// v_Color.xyz = n*0.5+0.5;
+				v_Color.xyz = kd * L_d * cos_theta;
+				// *L_d*cos_theta;
+				v_Color.w = a_Color.w;
+
+
+			}
+			
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragment-shader">
+			precision mediump float;
+			varying vec4 v_Color;
+			varying vec4 v_Normal;
+			void main(){
+				gl_FragColor = v_Color;
+
+			}
+		</script>
+	</head>
+
+	<body> 
+		<!-- <button id="ButtonCoarse">More coarse</button>
+		<button id="ButtonFine">More fine</button> -->
+		<!-- <button id="ButtonZ">Rotate Z</button> -->
+		<canvas id ="c" height="512" width="512" /> 
+
+	</body>
+</html
