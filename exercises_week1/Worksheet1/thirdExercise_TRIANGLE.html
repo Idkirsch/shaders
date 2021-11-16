@@ -12,16 +12,15 @@
 			attribute vec4 a_Position;
 			attribute vec4 a_Color;
 			varying vec4 v_Color;
-			uniform float u_CosB, u_SinB;
-			uniform vec4 u_Translation; // this is the translation matrix that is sent, which is simply an offset on the x and y axis
+			uniform mat4 u_translateMatrix;
+			uniform mat4 u_rotateMatrix;
+			uniform mat4 u_scaleMatrix;
+
 
 			void main(){
 				v_Color = a_Color;
-				// gl_Position = a_Position + u_Translation;
-				gl_Position.x = a_Position.x * u_CosB - a_Position.y*u_SinB;
-				gl_Position.y = a_Position.x * u_SinB + a_Position.y * u_CosB;
-				gl_Position.z = a_Position.z;
-				gl_Position.w = 1.0;
+			
+				gl_Position = u_rotateMatrix * u_translateMatrix * a_Position;
 
 			}
 			

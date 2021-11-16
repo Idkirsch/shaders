@@ -11,7 +11,9 @@ window.onload = function init(){
 	// these are used as an offset in an attempt to move the triangle around on the 2D plane
 	var Tx = 0.5, Ty = 0.5, Tz = 0.0;
 	//this is an angle used for the rotation
-	var ANGLE = 30.0;
+	var ANGLE = 50.0;
+	// this is variables used for scaling
+	var Sx = 1.0, Sy = 1.5, Sz = 1.0;
 
 
 	var program = initShaders(gl, "vertex-shader", "fragment-shader");
@@ -20,20 +22,45 @@ window.onload = function init(){
  	var vertices = [ vec2(0.0, 0.5), vec2(-0.5, -0.5), vec2(0.5, -0.5) ];
  	var colors = [ vec3(1,0,0), vec3(0,1,0), vec3(0,0,1)]
  	
-
-	// this is where the offset is connected to the vertex shader
-	var u_Translation = gl.getUniformLocation(program, "u_Translation");
-	gl.uniform4f(u_Translation, Tx, Ty, Tz, 0.0);
 	
 	//this is the date that is required to rotate the triangle
 	var radian = Math.PI * ANGLE/180.0; //converting to radians
-	var cosB = Math.cos(radian);
-	var sinB = Math.sin(radian);
-	var u_CosB = gl.getUniformLocation(program, "u_CosB");
-	var u_SinB = gl.getUniformLocation(program, "u_SinB");
-	gl.uniform1f(u_CosB, cosB);
-	gl.uniform1f(u_SinB, sinB);
+	var cosB = Math.cos(radian), sinB = Math.sin(radian);
 
+	var rotateMatrix = new Float32Array([
+		cosB, sinB, .0, .0,
+		-sinB, cosB, .0, .0,
+		.0, .0, 1.0, .0,
+		.0, .0, .0, 1.0
+		]);
+
+	var translateMatrix = new Float32Array([
+		1.0, .0, .0, .0,
+		.0, 1.0, .0, .0,
+		.0, .0, 1.0, .0,
+		Tx, Ty, Tz, 1.0
+	]);
+
+	var scaleMatrix = new Float32Array([
+		Sx,.0,.0,.0,
+		.0,Sy,.0,.0,
+		.0,.0,Sz,.0,
+		.0,.0,.0,1.0
+		]);
+
+
+	var u_rotateMatrix = gl.getUniformLocation(program, "u_rotateMatrix");
+	gl.uniformMatrix4fv(u_rotateMatrix, false, rotateMatrix);
+
+	var u_translateMatrix = gl.getUniformLocation(program, "u_translateMatrix");
+	gl.uniformMatrix4fv(u_translateMatrix, false, translateMatrix);
+
+	var u_scaleMatrix = gl.getUniformLocation(program, "u_scaleMatrix");
+	gl.uniformMatrix4fv(u_scaleMatrix, false, scaleMatrix);
+
+
+	// var u_CosBSinB = gl.getUniformLocation(program, "u_CosBSinB");
+	// gl.uniform2f(u_CosBSinB, cosB, sinB);
 
 
 
