@@ -6,10 +6,12 @@ window.onload = function init(){
     var vertices = []; // this array stores all the vertices used for points, triangles and circles  
     var points = []; // this array stores the index of the points
     var triangles = []; // this array stores the index of the starting point of a triangle
+    var lines = []; // array stores index of starting point of line
     var colorIndex = 0;
-	var maxVertices = 3;
+	var maxVertices = 30;
 	var drawPoints = true;
 	var counterForTriangle = 0;
+	var counterForLine = 0;
 
 
 	gl.clearColor(0.1, 0.5843, 0.9294, 1.0); //set the background color
@@ -47,10 +49,16 @@ window.onload = function init(){
         
         var pts = [x, y];
         vertices.push(pts);
-        console.log("vertices: "+vertices);
+    
 
         points.push(index);
-        console.log("points: "+points);
+        if(counterForLine === 1){
+        	points.pop();
+        	lines.push(points.pop());
+        	counterForLine = -1;
+        }
+        counterForLine++;
+
 
         // Binding the buffer for the vertices and adding data
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
@@ -96,11 +104,13 @@ window.onload = function init(){
 		if(numPoints >= 2){
 			for(i = 0; i < numPoints; i++){
 				// console.log("render function point at index: "+points[i]);
-				gl.drawArrays(gl.LINES, points[i], 2);
+				gl.drawArrays(gl.LINES, lines[i], 2);
 				// console.log(vertices[i]);
 				
 			}	
 		}
+
+		
 		
 		// for(i = 0; i < numPoints; i++){
 		// 	// console.log("render function triangle at index: "+triangles[i]);
