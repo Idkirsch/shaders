@@ -12,6 +12,7 @@ window.onload = function init(){
 	var drawPoints = true;
 	var counterForTriangle = 0;
 	var counterForLine = 0;
+	var hasLineBeenDrawn = false;
 
 
 	gl.clearColor(0.1, 0.5843, 0.9294, 1.0); //set the background color
@@ -49,16 +50,26 @@ window.onload = function init(){
         
         var pts = [x, y];
         vertices.push(pts);
-    
+    	
+
 
         points.push(index);
         if(counterForLine === 1){
-        	points.pop();
-        	lines.push(points.pop());
+        	hasLineBeenDrawn = true;
+
+        	// points.pop();
+        	// points.pop()
+        	lines.push(index-1);
         	counterForLine = -1;
         }
-        counterForLine++;
+    	if(!hasLineBeenDrawn){
+    		counterForLine++;
+    	}
 
+       
+
+        console.log("points: "+ points);
+        console.log("lines: "+ lines);
 
         // Binding the buffer for the vertices and adding data
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
@@ -101,14 +112,21 @@ window.onload = function init(){
 
  	function render(){
 		gl.clear(gl.COLOR_BUFFER_BIT);
-		if(numPoints >= 2){
+		
+		if(hasLineBeenDrawn) {
 			for(i = 0; i < numPoints; i++){
-				// console.log("render function point at index: "+points[i]);
 				gl.drawArrays(gl.LINES, lines[i], 2);
 				// console.log(vertices[i]);
-				
 			}	
 		}
+	
+		for(i = 0; i < numPoints; i++){
+			// console.log("render function point at index: "+points[i]);
+			gl.drawArrays(gl.POINTS, points[i], 1);
+			// console.log(vertices[i]);
+			
+		}	
+		
 
 		
 		
