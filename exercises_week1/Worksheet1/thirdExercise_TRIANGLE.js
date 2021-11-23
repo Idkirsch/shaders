@@ -10,8 +10,10 @@ window.onload = function init(){
 
 	// these are used as an offset in an attempt to move the triangle around on the 2D plane
 	var Tx = 0.5, Ty = 0.5, Tz = 0.0;
-	//this is an angle used for the rotation
+	//this is an angle used for one-time rotation
 	var ANGLE = 50.0;
+	// this angle is used for animated rotation
+	var ANGLE_STEP = 45.0;
 	// this is variables used for scaling
 	var Sx = 1.0, Sy = 1.5, Sz = 1.0;
 
@@ -23,7 +25,7 @@ window.onload = function init(){
  	var colors = [ vec3(1,0,0), vec3(0,1,0), vec3(0,0,1)]
  	
 	
-	//this is the date that is required to rotate the triangle
+//this is the date that is required to rotate the triangle
 	var radian = Math.PI * ANGLE/180.0; //converting to radians
 	var cosB = Math.cos(radian), sinB = Math.sin(radian);
 
@@ -59,11 +61,6 @@ window.onload = function init(){
 	gl.uniformMatrix4fv(u_scaleMatrix, false, scaleMatrix);
 
 
-	// var u_CosBSinB = gl.getUniformLocation(program, "u_CosBSinB");
-	// gl.uniform2f(u_CosBSinB, cosB, sinB);
-
-
-
  	var vBuffer = gl.createBuffer();
  	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
  	gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
@@ -79,7 +76,12 @@ window.onload = function init(){
  	gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
  	gl.enableVertexAttribArray(vColor);
 
+
+
  	gl.drawArrays(gl.TRIANGLES, 0, vertices.length);
+
+
+
 
 }
 

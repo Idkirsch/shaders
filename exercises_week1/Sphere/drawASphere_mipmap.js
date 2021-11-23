@@ -1,8 +1,12 @@
+// worksheet 7
+// slides from week 8
+
 var vertices = [];
 var vertexColors = [];
 var normalsArray = [];
 var numTimesToSubdivide = 4;
 var image = document.createElement('img');
+
 
 window.onload = function init(){
 
@@ -23,6 +27,14 @@ window.onload = function init(){
  	image.onload = function(){
  		// Insert WebGL texture initialization here
 
+ 		var cubemap = ['textures/cm_left.png', // POSITIVE_X
+ 		'textures/cm_right.png', // NEGATIVE_X
+ 		'textures/cm_top.png', // POSITIVE_Y
+ 		'textures/cm_bottom.png', // NEGATIVE_Y
+ 		'textures/cm_back.png', // POSITIVE_Z
+ 		'textures/cm_front.png']; // NEGATIVE_Z
+
+
  		const texture = gl.createTexture();
  		gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -39,13 +51,14 @@ window.onload = function init(){
  	}
  	image.src = 'earth.jpg'
 
- 	var beta = 0.0;
+ 	
+ 	var beta = -0.9;
 	var betaLoc = gl.getUniformLocation(gl.program, "beta")
 
  	initSphere(gl, numTimesToSubdivide);
  	view(gl)
  	function tick(){
- 		beta += 0.01;
+ 		// beta += 0.01; // this one makes it spin
  		gl.uniform1f(betaLoc, beta);
  		requestAnimationFrame(tick);
 		render(gl, vertices.length);

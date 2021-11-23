@@ -8,7 +8,8 @@ window.onload = function init(){
 	gl.clearColor(0.1, 0.5843, 0.9294, 1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT); 
 
-	
+	// these are used as an offset in an attempt to move the triangle around on the 2D plane
+	var Tx = 0.5, Ty = 0.5, Tz = 0.0;
 
 	var program = initShaders(gl, "vertex-shader", "fragment-shader");
  	gl.useProgram(program);
@@ -38,6 +39,11 @@ window.onload = function init(){
  	gl.uniform1i(someSamplerLoc, unit);
 
 // ------------------
+	
+	// this is where the offset is connected to the vertex shader
+	var u_Translation = gl.getUniformLocation(program, "u_Translation");
+	gl.uniform4f(u_Translation, Tx, Ty, Tz, 0.0);
+	
 
  	var vBuffer = gl.createBuffer();
  	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
