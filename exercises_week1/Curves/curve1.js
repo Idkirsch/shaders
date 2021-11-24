@@ -43,53 +43,28 @@ window.onload = function init(){
 		var boundingBox = event.target.getBoundingClientRect();
 
 		x=2*(event.clientX - boundingBox.left)/canvas.width-1;
-        y=2*(canvas.height-event.clientY+boundingBox.top)/canvas.height-1;
-        
-        var pts = [x, y];
-        vertices.push(pts);
-    	
-        points.push(index);
-        if(counterForLine === 1){
-        	hasLineBeenDrawn = true;
+      y=2*(canvas.height-event.clientY+boundingBox.top)/canvas.height-1;
+     
+      var pts = [x, y];
+      vertices.push(pts);
+ 	
+      points.push(index);
+      if(counterForLine === 1){
+     	hasLineBeenDrawn = true;
 
-        	// points.pop();
-        	// points.pop()
-        	lines.push(index-1);
-        	counterForLine = -1;
-        }
+     	lines.push(index-1);
+     	counterForLine = -1;
+      }
     	if(!hasLineBeenDrawn){
     		counterForLine++;
     	}
 
 
+    	// this is where the beziercurve should be drawn
     	if(numPoints == 2){
-    		console.log("three points")
-    		var testPoint = [0.0,0.0];
-    		
-    		vertices.push(testPoint);
-
-	        // Binding the buffer for the vertices and adding data
-	        gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
-	        gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(testPoint));      
-	        // Binding the buffer for colors and adding colors
-	        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
-			gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[2]));
-
-    	
-    		numPoints++;
-    		index ++;
-    		bezierCurvePoints.push(index);
-
-    
+    		bezierCurve();
     	}
 
-    	console.log(vertices)
-        // console.log("points: "+ points);
-     //    console.log("lines: "+ lines);
-        // console.log("bezierCurvePoints: " + bezierCurvePoints);
-
-
-    
       // Binding the buffer for the vertices and adding data
      	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
       gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(pts));      
@@ -97,19 +72,83 @@ window.onload = function init(){
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
 		gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[colorIndex]));
 
-
-    	
 		index++;
        
-        // this line does so the first point in the buffer is overwritten by the last one
+        // this line does so the first point in the buffer is overwritten by the last one	
+      numPoints = Math.max(numPoints, index);
         	
-        numPoints = Math.max(numPoints, index);
-        	
-       	index %= maxVertices;
+      index %= maxVertices;
 
 
 		render();
 
+	}
+
+	function bezierCurve(){
+
+		// print values of p0, p1 and p2
+		console.log("P0 : "+vertices[0]);
+		console.log("P0.x : "+vertices[0][0]);
+		console.log("P0.y : "+vertices[0][1]);
+		console.log("P1 : "+vertices[2]);
+		console.log("P2 : "+vertices[1]);
+
+		var t = 0.5;
+		// var P0 = vertices[0];
+		var P0_x = vertices[0][0];
+		var P0_y = vertices[0][1];
+
+		var P1_x = vertices[2][0];
+		var P1_y = vertices[2][1];
+
+		var P2_x = vertices[1][0];
+		var P2_y = vertices[1][1];
+	   
+	   for (let t = 0; t < 1; t=t+0.1) {
+
+	   	console.log("hi");
+
+	    		var BezierTestPoint_x = P1_x + Math.pow((1-t),2)*(P0_x-P1_x)+Math.pow(t,2)*(P2_x-P1_x);
+	    		var BezierTestPoint_y = P1_y + Math.pow((1-t),2)*(P0_y-P1_y)+Math.pow(t,2)*(P2_y-P1_y);
+
+	    		var BezierTestPoint = [BezierTestPoint_x, BezierTestPoint_y];
+
+	    		console.log("BezierTestPoint : "+ BezierTestPoint);
+
+	     		vertices.push(BezierTestPoint);
+
+	          // Binding the buffer for the vertices and adding data
+	          gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
+	          gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(BezierTestPoint));      
+	          // Binding the buffer for colors and adding colors
+	          gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
+	    		gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[3]));
+	     	
+	     		numPoints++;
+	     		index ++;
+	     		bezierCurvePoints.push(index);
+
+	   }
+
+
+	
+
+
+
+   //  		var testPoint = [0.0,0.0];
+    		
+   //  		vertices.push(testPoint);
+
+	  //     // Binding the buffer for the vertices and adding data
+	  //     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
+	  //     gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(testPoint));      
+	  //     // Binding the buffer for colors and adding colors
+	  //     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
+			// gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[2]));
+    	
+   //  		numPoints++;
+   //  		index ++;
+   //  		bezierCurvePoints.push(index);
 	}
 
 
@@ -129,8 +168,6 @@ window.onload = function init(){
 	 	var vertexColor = gl.getAttribLocation(program, "a_Color");
 	 	gl.vertexAttribPointer(vertexColor, 4, gl.FLOAT, false, 0, 0);
 	 	gl.enableVertexAttribArray(vertexColor);
-
-
 
 
 
