@@ -8,16 +8,16 @@ window.onload = function init(){
  	gl.useProgram(program);
 
  	var index = 0;	//index is like a pointer to the buffer
- 	var numPoints = 0; //numPoints has the number of points in the buffer, and can be used to control how much is drawn
-    var colorIndex = 0;
+ 	var numPoints = 0; //numPoints has the number of points in the buffer, and can be used to control how much is drawn 
+   var colorIndex = 0;
 	var maxVertices = 30;
 	var counterForTriangle = 0;
 	var counterForLine = 0;
     
-    var vertices = []; // this array stores all the vertices used for points, triangles and circles  
-    var points = []; // this array stores the index of the points
-    var triangles = []; // this array stores the index of the starting point of a triangle
-    var lines = []; // array stores index of starting point of line
+   var vertices = []; // this array stores all the vertices used for points, triangles and circles  
+   var points = []; // this array stores the index of the points
+   var triangles = []; // this array stores the index of the starting point of a triangle
+   var lines = []; // array stores index of starting point of line
 	var bezierCurvePoints = [];
 
 	var drawPoints = true;
@@ -35,12 +35,6 @@ window.onload = function init(){
 		vec4(0.0, 1.0, 1.0, 1.0) // cyan
 	];
 
-
-
-
-
-
-
  
 	//Draw points on mouseclick
  	canvas.addEventListener("mousedown", MouseDown, false);
@@ -54,8 +48,6 @@ window.onload = function init(){
         var pts = [x, y];
         vertices.push(pts);
     	
-
-
         points.push(index);
         if(counterForLine === 1){
         	hasLineBeenDrawn = true;
@@ -88,11 +80,7 @@ window.onload = function init(){
     		index ++;
     		bezierCurvePoints.push(index);
 
-    	
-
-    		// console.log(bezierCurvePoints);
-    		// console.log("numPoints " +numPoints)
-
+    
     	}
 
     	console.log(vertices)
@@ -102,11 +90,11 @@ window.onload = function init(){
 
 
     
-        // Binding the buffer for the vertices and adding data
-        gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
-        gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(pts));      
-        // Binding the buffer for colors and adding colors
-        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
+      // Binding the buffer for the vertices and adding data
+     	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
+      gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(pts));      
+      // Binding the buffer for colors and adding colors
+      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
 		gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[colorIndex]));
 
 
@@ -168,20 +156,8 @@ window.onload = function init(){
 			// console.log("render function point at index: "+points[i]);
 			gl.drawArrays(gl.POINTS, bezierCurvePoints[i], 1);
 
-			// console.log("bcp i: "+bezierCurvePoints[i])
-			// console.log("bcp 0: "+bezierCurvePoints[0])
-			// console.log("bcp : "+bezierCurvePoints)
-
-			// console.log("vertices: "+vertices[i]);
-			
 		}	
-		
-
-
 	}
-
-
-
 }
 
 
