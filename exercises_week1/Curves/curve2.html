@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<!-- <script type="text/javascript" src="../../angelCommon/webgl-utils.js"></script> -->
+    <script type="text/javascript" src="../initShaders.js"> </script>
+    <script type="text/javascript" src="../MV.js"> </script>
+    <script type="text/javascript" src="../webgl-utils.js"> </script>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 a_Position;
+attribute vec4 a_Color;
+varying vec4 v_Color;
+
+void main() {
+v_Color = a_Color;
+gl_Position = a_Position;
+gl_PointSize = 10.0;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 v_Color;
+void main() {
+gl_FragColor = v_Color;
+}
+</script>
+
+<!-- <select id="colorMenu" size="8">
+    <option value="0" selected>Black</option>
+    <option value="1">Red</option>
+    <option value="2">Yellow</option>
+    <option value="3">Green</option>
+    <option value="4">Blue</option>
+    <option value="5">Magenta</option>
+    <option value="6">Cyan</option>
+</select> -->
+
+
+<style>
+    .column {
+        float: left;
+         padding: 10px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
+
+<script src="curve2.js"></script>
+<body onload="main()">
+
+<div class="row">
+    <div class="column" >
+        <h4>Background color</h4>
+        <select id="clearMenu" size="1">
+            <option value="0">Red</option>
+            <option value="1">Black</option>
+            <option value="2">Yellow</option>
+            <option value="3">Green</option>
+            <option value="4">Blue</option>
+            <option value="5">Magenta</option>
+            <option value="6">Cyan</option>
+        </select><br />
+
+        <h4>Drawing color</h4>
+        <select id="drawMenu" size="1">
+            <option value="0">Red</option>
+            <option value="1" selected>Black</option>
+            <option value="2">Yellow</option>
+            <option value="3">Green</option>
+            <option value="4">Blue</option>
+            <option value="5">Magenta</option>
+            <option value="6">Cyan</option>
+        </select><br />
+
+        <h4>Drawing Mode</h4>
+        <button id="pointButton" >Points</button>
+        <button id="triangleButton" >Triangles</button>
+        <br />
+        <button id="circleButton">Circles</button>
+        <button id="curveButton">Curves</button>
+
+
+        <br /><br />
+        <button id="clearButton">clear canvas</button>
+
+    </div>
+
+    <div class="column" >
+        <canvas id="gl-canvas" width="512" height="512">
+        </canvas>
+    </div>
+</div>
+ 
+</body>
+</html>
