@@ -18,8 +18,8 @@ function main() {
     var triangles = [];
     var circles = [];
     var beziers = [];
-    var vertexs = [];
-    var vertexsForTheBuffer = [];
+    var vertexs = []; // This array is hopefully kept up to date so it reflects whats in the buffer
+    var vertexsForTheBuffer = []; // this array is filled and cleared often, so it only holds what should be pushed to the buffer in that round
     var colors = [
         vec4(1.0, 0.0, 0.0, 1.0), // red
         vec4(0.0, 0.0, 0.0, 1.0), // black
@@ -61,24 +61,24 @@ function main() {
         vertexs.push(newestVertex);
         vertexsForTheBuffer.push(newestVertex);
         points.push(index); // PUSHING AN INDEX TO POINTS
-        // console.log("index number "+ index+ " is pushed to points");
+        console.log("index number "+ index+ " is pushed to points");
         // console.log(" I AM NOW DRAWING POINTS")
 
         if (pointMode) {
-            // console.log(" I AM NOW DRAWING POINTS")
+            console.log(" I AM NOW DRAWING POINTS")
             count = 0;
         }
 
-        // if (triangleMode) {
-        //     console.log(" I AM NOW DRAWING TRIANGLES")
-        //     count++;
-        //     if (count == 3) {
-        //         points.pop();
-        //         points.pop();
-        //         triangles.push(points.pop());
-        //         count = 0;
-        //     }
-        // }
+        if (triangleMode) {
+            console.log(" I AM NOW DRAWING TRIANGLES")
+            count++;
+            if (count == 3) {
+                points.pop();
+                points.pop();
+                triangles.push(points.pop());
+                count = 0;
+            }
+        }
 
         // if (circleMode) {
         //     count++;

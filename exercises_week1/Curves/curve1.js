@@ -75,9 +75,9 @@ window.onload = function init(){
 
       // Binding the buffer for the vertices and adding data
      	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
-      gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(pts));      
+      	gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(pts));      
       // Binding the buffer for colors and adding colors
-      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
+     	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
 		gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[colorIndex]));
 
 		index++;
@@ -144,10 +144,10 @@ window.onload = function init(){
 
      		vertices.push(BezierTestPoint);
          
-         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
-         gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(BezierTestPoint));      
+        	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
+        	gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(BezierTestPoint));      
  
-         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
+         	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
     		gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[3]));
      	
      		bezierCurvePoints.push(index);
@@ -166,23 +166,7 @@ window.onload = function init(){
 	}
 
 
-	 	//initialize buffer for vertices
-	 	var vBuffer = gl.createBuffer();
-	 	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-	 	gl.bufferData(gl.ARRAY_BUFFER, maxVertices*sizeof['vec2'], gl.STATIC_DRAW);
-		var attributePosition = gl.getAttribLocation(program, 'a_Position');
-	 	gl.vertexAttribPointer(attributePosition, 2, gl.FLOAT, false, 0, 0);
-	 	gl.enableVertexAttribArray(attributePosition);
-
-
-	 	//initialize buffer for colors
-	 	var colorBuffer = gl.createBuffer();
-	 	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-	 	gl.bufferData(gl.ARRAY_BUFFER, maxVertices*sizeof['vec4'], gl.STATIC_DRAW);
-	 	var vertexColor = gl.getAttribLocation(program, "a_Color");
-	 	gl.vertexAttribPointer(vertexColor, 4, gl.FLOAT, false, 0, 0);
-	 	gl.enableVertexAttribArray(vertexColor);
-
+	 	
 
 
  	function render(){
@@ -208,6 +192,24 @@ window.onload = function init(){
 			// console.log("bezierCurvePoints[i+1] "+bezierCurvePoints[i+1]);
 		}	
 	}
+
+	//initialize buffer for vertices
+	 	var vBuffer = gl.createBuffer();
+	 	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+	 	gl.bufferData(gl.ARRAY_BUFFER, maxVertices*sizeof['vec2'], gl.STATIC_DRAW);
+		var attributePosition = gl.getAttribLocation(program, 'a_Position');
+	 	gl.vertexAttribPointer(attributePosition, 2, gl.FLOAT, false, 0, 0);
+	 	gl.enableVertexAttribArray(attributePosition);
+
+
+	 	//initialize buffer for colors
+	 	var colorBuffer = gl.createBuffer();
+	 	gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+	 	gl.bufferData(gl.ARRAY_BUFFER, maxVertices*sizeof['vec4'], gl.STATIC_DRAW);
+	 	var vertexColor = gl.getAttribLocation(program, "a_Color");
+	 	gl.vertexAttribPointer(vertexColor, 4, gl.FLOAT, false, 0, 0);
+	 	gl.enableVertexAttribArray(vertexColor);
+
 }
 
 
