@@ -6,6 +6,10 @@ window.onload = function init(){
    // initialize shaders
 	var program = initShaders(gl, "vertex-shader", "fragment-shader");
  	gl.useProgram(program);
+ 	var slider = document.getElementById("mySlider");
+ 	var curveButton = document.getElementById("curveButton");
+ 	var curveButtonPressed = false;
+
 
  	var index = 0;	//index is like a pointer to the buffer
  	// var numPoints = 0; //numPoints has the number of points in the buffer, and can be used to control how much is drawn 
@@ -13,7 +17,7 @@ window.onload = function init(){
 	var maxVertices = 30;
 	var counterForTriangle = 0;
 	var counterForLine = 0;
-	var numberOfStepsOnCurve = 10;
+	var numberOfStepsOnCurve = 20;
     
    var vertices = []; // this array stores all the vertices used for points, triangles and circles  
    var points = []; // this array stores the index of the points
@@ -23,6 +27,7 @@ window.onload = function init(){
 
 	var drawPoints = true;
 	var hasLineBeenDrawn = false;
+
 
  
  // Here are the colors for the colormeu
@@ -36,7 +41,24 @@ window.onload = function init(){
 		vec4(0.0, 1.0, 1.0, 1.0) // cyan
 	];
 
- 
+ 	slider.oninput = function(){
+ 		console.log("slider value: "+slider.value);
+ 	}
+
+ 	curveButton.onclick = function(event){
+ 		this.style.borderStyle = (this.style.borderStyle!=='inset' ? 'inset' : 'outset'); //when clicked
+ 		this.style.borderStyle = (this.style.borderStyle!=='outset' ? 'inset' : 'outset'); //when unclicked
+
+ 		if(!curveButtonPressed){
+ 			curveButtonPressed = true;
+ 			console.log(curveButtonPressed);
+ 		}else{
+ 			curveButtonPressed = false;
+ 			console.log(curveButtonPressed)
+ 		}
+
+ 	}
+
 	//Draw points on mouseclick
  	canvas.addEventListener("mousedown", MouseDown, false);
 	function MouseDown(event){
@@ -50,15 +72,6 @@ window.onload = function init(){
       vertices.push(pts);
       points.push(index);
 
-      if(counterForLine === 1){
-	     	hasLineBeenDrawn = true;
-
-	     	lines.push(index-1);
-	     	counterForLine = -1;
-      }
-    	if(!hasLineBeenDrawn){
-    		counterForLine++;
-    	}
 
       // Binding the buffer for the vertices and adding data
      	gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
@@ -70,10 +83,14 @@ window.onload = function init(){
 		index++;
 
    	// this is where the beziercurve should be drawn
-    	if(points.length == 3){
-    		bezierCurve();
-    	}
+    	// if(points.length == 3){
+    	// 	bezierCurve();
+    	// }
 
+
+    	if(curveButtonPressed){
+    		bezierCurve(x,y);
+    	}
  	
       index %= maxVertices;
 
@@ -85,16 +102,28 @@ window.onload = function init(){
 
 	}
 
-	function bezierCurve(){
+	function bezierCurve(x,y){
+
+
+      if(counterForLine === 1){
+	     	hasLineBeenDrawn = true;
+
+	     	lines.push(index-1);
+	     	counterForLine = -1;
+      }
+    	if(!hasLineBeenDrawn){
+    		counterForLine++;
+    	}
 
 		// print values of p0, p1 and p2
-		// console.log("P0 : "+vertices[0]);
-		// console.log("P0.x : "+vertices[0][0]);
+		console.log("P0 : "+x+", "+y);
+		// console.log("P0.x : "+vertices[x][y]);
 		// console.log("P0.y : "+vertices[0][1]);
 		// console.log("P1 : "+vertices[2]);
 		// console.log("P2 : "+vertices[1]);
 
-		// var t = 0.5;
+		var t = 0.5;
+	
 		var P0_x = vertices[0][0];
 		var P0_y = vertices[0][1];
 
@@ -103,30 +132,36 @@ window.onload = function init(){
 
 		var P2_x = vertices[1][0];
 		var P2_y = vertices[1][1];
-		var stepSize = 1/10;
+		var stepSize = 1/numberOfStepsOnCurve;
+		console.log("stepSize: "+ stepSize);
 	   
-	   for (let t = 0; t < 1; t=t+stepSize) {
+	   for (let t = 0; t < 1.1; t=t+stepSize) {
     		var BezierTestPoint_x = P1_x + Math.pow((1-t),2)*(P0_x-P1_x)+Math.pow(t,2)*(P2_x-P1_x);
     		var BezierTestPoint_y = P1_y + Math.pow((1-t),2)*(P0_y-P1_y)+Math.pow(t,2)*(P2_y-P1_y);
     		var BezierTestPoint = [BezierTestPoint_x, BezierTestPoint_y];
 
-     		vertices.push(BezierTestPoint);
+    		// console.log("BezierTestPoint : "+ BezierTestPoint);
 
+     		vertices.push(BezierTestPoint);
+         
          gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);                                       
          gl.bufferSubData(gl.ARRAY_BUFFER,  index*sizeof['vec2'], new Float32Array(BezierTestPoint));      
+ 
          gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer)	;
     		gl.bufferSubData(gl.ARRAY_BUFFER, index*sizeof['vec4'], flatten(colors[3]));
      	
      		bezierCurvePoints.push(index);
+     		// console.log("bezierCurvePoints : "+ bezierCurvePoints)
      		index ++;
+
 	   }
 
-	   for (let t = 0+stepSize; t < 1; t=t+stepSize) {
+	   for (let t = 0+stepSize; t < 1.1; t=t+stepSize) {
 	   	bezierCurvePoints.pop();
+     		// console.log("bezierCurvePoints : "+ bezierCurvePoints)
 	   }
 
-
-
+	   lines.pop(); // popping an index from lines because when the curve is drawn I want to remove the initial line between the points	   
 	
 	}
 
@@ -152,8 +187,6 @@ window.onload = function init(){
 
  	function render(){
 		gl.clear(gl.COLOR_BUFFER_BIT);
-		
-		// console.log("hasLineBeenDrawn : "+hasLineBeenDrawn);
 		if(hasLineBeenDrawn) {
 			for(i = 0; i < lines.length; i++){
 				gl.drawArrays(gl.LINES, lines[i], 2);
@@ -165,17 +198,14 @@ window.onload = function init(){
 			// console.log("render function point at index: "+points[i]);
 			gl.drawArrays(gl.POINTS, points[i], 1);
 			// console.log("points[i] "+ points[i])
-			// console.log(vertices[i]);
-			
+			// console.log(vertices[i]);			
 		}	
 
 		for(i = 0; i < bezierCurvePoints.length; i++){
 			// console.log("render function point at index: "+points[i]);
-
 			gl.drawArrays(gl.LINE_STRIP, bezierCurvePoints[i], numberOfStepsOnCurve+1); // It works when it's plus 1
-			// console.log("bezierCurvePoints[i] "+bezierCurvePoints[i]);
+			console.log("bezierCurvePoints[i] "+bezierCurvePoints[i]);
 			// console.log("bezierCurvePoints[i+1] "+bezierCurvePoints[i+1]);
-
 		}	
 	}
 }
