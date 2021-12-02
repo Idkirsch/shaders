@@ -19,7 +19,7 @@ function main() {
     var circles = [];
     var beziers = [];
     var vertexs = []; // This array is hopefully kept up to date so it reflects whats in the buffer
-    var vertexsForTheBuffer = []; // this array is filled and cleared often, so it only holds what should be pushed to the buffer in that round
+    // var vertexsForTheBuffer = []; // this array is filled and cleared often, so it only holds what should be pushed to the buffer in that round
     var colors = [
         vec4(1.0, 0.0, 0.0, 1.0), // red
         vec4(0.0, 0.0, 0.0, 1.0), // black
@@ -46,7 +46,7 @@ function main() {
 
     // var indexCount = 0;
     var count = 0;
-    var numberOfSubdivCircle = 60;
+    var numberOfSubdivCircle = 30;
     var numberofSubdivCurve = 4;
     var center = [];
     var p0 = [];
@@ -55,22 +55,22 @@ function main() {
 
     canvas.addEventListener("click", function (ev) {
         var bbox = ev.target.getBoundingClientRect();
-        vertexsForTheBuffer = [];
+  
+        // console.log("clearing vertexsForTheBuffer")
         newestVertex = vec2(2 * (ev.clientX - bbox.left) / canvas.width - 1, 2 * (canvas.height - ev.clientY + bbox.top - 1) / canvas.height - 1);
         // console.log("newestVertex : "+newestVertex);
-        vertexs.push(newestVertex);
-        vertexsForTheBuffer.push(newestVertex);
         points.push(index); // PUSHING AN INDEX TO POINTS
-        console.log("index number "+ index+ " is pushed to points");
+
+        // console.log("index number "+ index+ " is pushed to points");
         // console.log(" I AM NOW DRAWING POINTS")
 
         if (pointMode) {
-            console.log(" I AM NOW DRAWING POINTS")
+            // console.log(" I AM NOW DRAWING POINTS")
             count = 0;
         }
 
         if (triangleMode) {
-            console.log(" I AM NOW DRAWING TRIANGLES")
+            // console.log(" I AM NOW DRAWING TRIANGLES")
             count++;
             if (count == 3) {
                 points.pop();
@@ -80,37 +80,22 @@ function main() {
             }
         }
 
-        // if (circleMode) {
-        //     count++;
-        //     if (count == 1) {
-        //         center = vertexs;
-        //     }
-        //     if (count == 2) {
-        //         var outer = vertexs;
-        //         points.pop();
+        if (circleMode) {
+            count++;
+            // console.log("count: "+count);
+            // console.log("index: "+index);
+            if (count == 1) {
+                center = newestVertex;
+                // console.log("center: "+center);
+            }
+            if (count == 2) {
 
-        //         circles.push(points.pop());
+                drawCircle();
 
-        //         var radius = Math.sqrt(Math.pow(center[0] - outer[0], 2) + Math.pow(center[1] - outer[1], 2));
-                
-        //         vertexs.pop();
-        //         vertexs.pop();
-                
-                
-        //         for (let i = 0; i <= numberOfSubdivCircle; i++) {
-        //             var theta = 2 * Math.PI * i / numberOfSubdivCircle;
-        //             var vert1 = center[0] + radius * Math.cos(theta);
-        //             vertexs.push(vert1);
-        //             var vert2 = center[1] + radius * Math.sin(theta);
-        //             vertexs.push(vert2);
-        //             drawColor.push(colors[drawMenu.selectedIndex]);
-        //             index++;
-        //         }
-        //         count = 0;
-        //         // indexCount += numberOfSubdivCircle + 1;
-        //     }
-        //     console.log(" I AM NOW DRAWING CIRCLES")
-        // }
+                // indexCount += numberOfSubdivCircle + 1;
+            }
+            // console.log(" I AM NOW DRAWING CIRCLES")
+        }
 
         // if (bezierMode) {
         //     count++;
@@ -145,17 +130,56 @@ function main() {
         // }
 
         // console.log("vertexs: "+vertexs);
+        // console.log("vertexsForTheBuffer length: "+ vertexsForTheBuffer.length)
+        // console.log("putting vertices in buffer");
         //position buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-        gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec2'], flatten(vertexsForTheBuffer));
+        gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec2'], flatten(newestVertex));
         //color buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec4'], flatten(drawColor));
         index++;
+        console.log("index: "+index);
 
 
         render();
     });
+
+       
+    function drawCircle(){
+
+        var outer = newestVertex;
+        // console.log("outer: "+outer);
+        points.pop();
+
+        circles.push(points.pop());
+
+        var radius = Math.sqrt(Math.pow(center[0] - outer[0], 2) + Math.pow(center[1] - outer[1], 2));
+        console.log("radius :"+ radius);
+
+        for (let i = 0; i <= numberOfSubdivCircle; i++) {
+            console.log(i)
+            var theta = 2 * Math.PI * i / numberOfSubdivCircle;
+            var x = center[0] + radius * Math.cos(theta);
+            var y = center[1] + radius * Math.sin(theta);
+           
+            var vertex = vec2(x,y);
+            vertexs.push(vertex);
+
+            drawColor.push(colors[drawMenu.selectedIndex]);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+            gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec2'], flatten(vertex));
+            //color buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec4'], flatten(drawColor));
+            index++;
+            console.log("index (loop) : "+index);
+
+        }
+        count = 0;
+    }    
+
 
 
 
@@ -165,13 +189,15 @@ function main() {
 
         for (i = 0; i < points.length; i++) {
             gl.drawArrays(gl.POINTS, points[i], 1); 
-            // console.log("points: "+points);
+            console.log("points: "+points);
             // console.log("HELLO FROM RENDERING POINTS. "+points[i]);
             // console.log("vertexs: "+vertexs);
         }
 
         for (i = 0; i < triangles.length; i++) {
             gl.drawArrays(gl.TRIANGLES, triangles[i], 3);
+            console.log("triangles: "+triangles);
+
         }
 
         for (i = 0; i < circles.length; i++) {
