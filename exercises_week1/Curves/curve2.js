@@ -12,14 +12,11 @@ function main() {
     gl.useProgram(program);
 
     var max_verts = 1000;
-    var index = 0;
-    // var numPoints = 0;
-    var points = [];
+    var index = 0;    var points = [];
     var triangles = [];
     var circles = [];
     var beziers = [];
     var vertexs = []; // This array is hopefully kept up to date so it reflects whats in the buffer
-    // var vertexsForTheBuffer = []; // this array is filled and cleared often, so it only holds what should be pushed to the buffer in that round
     var colors = [
         vec4(1.0, 0.0, 0.0, 1.0), // red
         vec4(0.0, 0.0, 0.0, 1.0), // black
@@ -38,41 +35,33 @@ function main() {
     var circleButton = document.getElementById("circleButton");
 
     var drawColor = [colors[drawMenu.selectedIndex]];
-
     var pointMode = false;
     var triangleMode = false;
     var circleMode = false;
     var bezierMode = false;
 
-    // var indexCount = 0;
-    var count = 0;
-    var numberOfSubdivCircle = 30;
-    var numberofSubdivCurve = 4;
-    var center = [];
-    var p0 = [];
+    var count = 0; // counter for keeping track of how many points are drawn in triangle, circle and curve
+    var numberOfSubdivCircle = 30;  // smoothness of circle
+    var numberofSubdivCurve = 5; // smoothness of curve
+    var center = [];  // center of the circle
+    var p0 = [];    // points for curve
     var p1 = [];
     var p2 = [];
 
     canvas.addEventListener("click", function (ev) {
         var bbox = ev.target.getBoundingClientRect();
   
-        // console.log("clearing vertexsForTheBuffer")
         newestVertex = vec2(2 * (ev.clientX - bbox.left) / canvas.width - 1, 2 * (canvas.height - ev.clientY + bbox.top - 1) / canvas.height - 1);
-        // console.log("newestVertex : "+newestVertex);
-        points.push(index); // PUSHING AN INDEX TO POINTS
-
-        // console.log("index number "+ index+ " is pushed to points");
-        // console.log(" I AM NOW DRAWING POINTS")
+       
+        points.push(index); 
 
         if (pointMode) {
-            // console.log(" I AM NOW DRAWING POINTS")
             count = 0;
         }
 
         if (triangleMode) {
-            // console.log(" I AM NOW DRAWING TRIANGLES")
             count++;
-            if (count == 3) {
+            if (count == 3) { // only draw triangle if the user input three consecutive points
                 points.pop();
                 points.pop();
                 triangles.push(points.pop());
@@ -82,64 +71,39 @@ function main() {
 
         if (circleMode) {
             count++;
-            // console.log("count: "+count);
-            // console.log("index: "+index);
             if (count == 1) {
                 center = newestVertex;
-                // console.log("center: "+center);
             }
-            if (count == 2) {
-
+            if (count == 2) { // only draw circle if user input two consecutive points
                 drawCircle();
-
-                // indexCount += numberOfSubdivCircle + 1;
+                count = 0; 
             }
-            // console.log(" I AM NOW DRAWING CIRCLES")
         }
 
-        // if (bezierMode) {
-        //     count++;
-        //     if (count == 1) {
-        //         p0 = newestVertex;
-        //         console.log("p0: "+p0);
-        //         console.log(" p0 again?  "+ newestVertex)
-        //         console.log("vertexs: "+vertexs);
-        //     }
-        //     if (count == 2) {
-        //         p2 = newestVertex;
-        //     }
-        //     if (count == 3) {
-        //         p1 = newestVertex;
-        //         points.pop();
-        //         points.pop();
-        //         beziers.push(points.pop());
-        //         // vertexs = [];
+        if (bezierMode) {
+            count++;
+            if (count == 1) {
+                p0 = newestVertex;
+            }
+            if (count == 2) {
+                p2 = newestVertex;
+            }
+            if (count == 3) {
+                p1 = newestVertex;
+                drawCurve();
+                count = 0;
 
-        //         for (let i = 0; i <= numberofSubdivCurve; i++) {
-        //             t = i / numberofSubdivCurve;
-        //             bx = p1[0] + Math.pow(1 - t, 2) * (p0[0] - p1[0]) + Math.pow(t, 2) * (p2[0] - p1[0]);
-        //             by = p1[1] + Math.pow(1 - t, 2) * (p0[1] - p1[1]) + Math.pow(t, 2) * (p2[1] - p1[1]);
-        //             vertexs.push(vec2(bx, by));
-        //             drawColor.push(colors[drawMenu.selectedIndex]);
-        //             index++;
-        //         }
-        //         count = 0;
+            }
+  
+        }
 
-        //     }
-        //     console.log(" I AM NOW DRAWING CURVES")
-        // }
-
-        // console.log("vertexs: "+vertexs);
-        // console.log("vertexsForTheBuffer length: "+ vertexsForTheBuffer.length)
-        // console.log("putting vertices in buffer");
-        //position buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec2'], flatten(newestVertex));
         //color buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec4'], flatten(drawColor));
         index++;
-        console.log("index: "+index);
+        // console.log("index: "+index);
 
 
         render();
@@ -149,16 +113,14 @@ function main() {
     function drawCircle(){
 
         var outer = newestVertex;
-        // console.log("outer: "+outer);
-        points.pop();
 
-        circles.push(points.pop());
+        points.pop();
+        circles.push(points.pop()); // putting the correct index in the array for circles
 
         var radius = Math.sqrt(Math.pow(center[0] - outer[0], 2) + Math.pow(center[1] - outer[1], 2));
-        console.log("radius :"+ radius);
 
         for (let i = 0; i <= numberOfSubdivCircle; i++) {
-            console.log(i)
+
             var theta = 2 * Math.PI * i / numberOfSubdivCircle;
             var x = center[0] + radius * Math.cos(theta);
             var y = center[1] + radius * Math.sin(theta);
@@ -168,18 +130,40 @@ function main() {
 
             drawColor.push(colors[drawMenu.selectedIndex]);
 
+            // putting each vertex in the buffer
             gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
             gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec2'], flatten(vertex));
             //color buffer
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
             gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec4'], flatten(drawColor));
             index++;
-            console.log("index (loop) : "+index);
 
         }
-        count = 0;
+      
     }    
 
+    function drawCurve(){
+        points.pop();
+        points.pop();
+        beziers.push(points.pop());
+
+        for (let i = 0; i <= numberofSubdivCurve; i++) {
+            console.log("i: "+i)
+            t = i / numberofSubdivCurve;
+            bx = p1[0] + Math.pow(1 - t, 2) * (p0[0] - p1[0]) + Math.pow(t, 2) * (p2[0] - p1[0]);
+            by = p1[1] + Math.pow(1 - t, 2) * (p0[1] - p1[1]) + Math.pow(t, 2) * (p2[1] - p1[1]);
+            var point = vec2(bx,by);
+            vertexs.push(point);
+            drawColor.push(colors[drawMenu.selectedIndex]);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+            gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec2'], flatten(point));
+            //color buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            gl.bufferSubData(gl.ARRAY_BUFFER, index * sizeof['vec4'], flatten(drawColor));
+            index++;
+        }
+    }
 
 
 
@@ -190,8 +174,6 @@ function main() {
         for (i = 0; i < points.length; i++) {
             gl.drawArrays(gl.POINTS, points[i], 1); 
             console.log("points: "+points);
-            // console.log("HELLO FROM RENDERING POINTS. "+points[i]);
-            // console.log("vertexs: "+vertexs);
         }
 
         for (i = 0; i < triangles.length; i++) {
@@ -206,13 +188,15 @@ function main() {
         }
 
         for (i = 0; i < beziers.length; i++) {
-            gl.drawArrays(gl.LINE_STRIP, beziers[i], numberofSubdivCurve + 3);
+            gl.drawArrays(gl.LINE_STRIP, beziers[i], numberofSubdivCurve +3);
             console.log("beziers: "+beziers)
         }
 
         
     }
    
+/////// initializing buffers for vertices and colors //////
+
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, max_verts * sizeof['vec2'], gl.STATIC_DRAW);
@@ -254,21 +238,21 @@ function main() {
         pointMode = true;
         triangleMode = false;
         circleMode = false;
-        bezierMode - false;
+        bezierMode = false;
     });
 
     triangleButton.addEventListener("click", function (event) {
         pointMode = false;
         triangleMode = true;
         circleMode = false;
-        bezierMode - false;
+        bezierMode = false;
     })
 
     circleButton.addEventListener("click", function (event) {
         pointMode = false;
         triangleMode = false;
         circleMode = true;
-        bezierMode - false;
+        bezierMode = false;
     })
 
     curveButton.addEventListener("click", function (event) {
