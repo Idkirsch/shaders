@@ -227,11 +227,15 @@ function main() {
         circles = [];
         beziers = [];
         count = 0;
+        render();
     });
 
-    drawMenu.addEventListener("click", function (event) {
+
+    drawMenu.addEventListener("change", function (event) {
         var dwcolor = colors[drawMenu.selectedIndex];
         drawColor = vec4(dwcolor[0], dwcolor[1], dwcolor[2], dwcolor[3]);
+        console.log("changed to "+ drawColor)
+        render();
     });
 
     pointButton.addEventListener("click", function (event) {
