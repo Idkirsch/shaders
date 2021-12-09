@@ -42,7 +42,7 @@ function main() {
 
     var count = 0; // counter for keeping track of how many points are drawn in triangle, circle and curve
     var numberOfSubdivCircle = 30;  // smoothness of circle
-    var numberofSubdivCurve = 30; // smoothness of curve
+    var numberofSubdivCurve = 50; // smoothness of curve
     var center = [];  // center of the circle
     var p0 = [];    // points for curve
     var p1 = [];
@@ -144,6 +144,7 @@ function main() {
 
     function drawCurve(){
         points.pop();
+        index--
         points.pop();
         beziers.push(points.pop());
 
@@ -188,8 +189,8 @@ function main() {
         }
 
         for (i = 0; i < beziers.length; i++) {
-            gl.drawArrays(gl.LINE_STRIP, beziers[i], numberofSubdivCurve +3);
-            console.log("beziers: "+beziers)
+            gl.drawArrays(gl.LINE_STRIP, beziers[i], numberofSubdivCurve +2);
+            console.log("beziers: "+beziers[i])
         }
 
         
