@@ -42,7 +42,7 @@ function main() {
 
     var count = 0; // counter for keeping track of how many points are drawn in triangle, circle and curve
     var numberOfSubdivCircle = 30;  // smoothness of circle
-    var numberofSubdivCurve = 5; // smoothness of curve
+    var numberofSubdivCurve = 30; // smoothness of curve
     var center = [];  // center of the circle
     var p0 = [];    // points for curve
     var p1 = [];
